@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "com.example.untitled2.app-mergeReleaseResources-9:/values-night-v8/values-night-v8.xml",
+            "outputFile": "com.example.untitled2.app-mergeReleaseResources-17:/values-night-v8/values-night-v8.xml",
             "map": [
                 {
                     "source": "/Users/macpro/StudioProjects/untitled2/android/app/src/main/res/values-night/styles.xml",

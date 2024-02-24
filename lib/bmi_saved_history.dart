@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'bmi_utils.dart';
 
 class BMISavedHistoryScreen extends StatelessWidget {
+  final ApiProvider apiProvider = ApiProvider();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('BMI History'),
       ),
-      body: FutureBuilder<List<Map<String, String>>>(
-        future: getSavedBMIHistory(),
+      body: FutureBuilder<List<Map<String, dynamic>>>(
+        future: apiProvider.getSavedHistory(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return CircularProgressIndicator();
@@ -18,7 +19,7 @@ class BMISavedHistoryScreen extends StatelessWidget {
           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
             return Center(child: Text('No BMI history available.'));
           } else {
-            List<Map<String, String>> bmiHistory = snapshot.data!;
+            List<Map<String, dynamic>> bmiHistory = snapshot.data!;
             return ListView.builder(
               itemCount: bmiHistory.length,
               itemBuilder: (context, index) {
@@ -34,25 +35,5 @@ class BMISavedHistoryScreen extends StatelessWidget {
       ),
     );
   }
-
-  Future<List<Map<String, String>>> getSavedBMIHistory() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    List<Map<String, String>> bmiHistory = [];
-
-    for (String key in prefs.getKeys()) {
-      if (key.startsWith('bmi_')) {
-        Map<String, String> bmiData = {
-          'bmi': prefs.getString(key) ?? '',
-          'category': prefs.getString(key.replaceFirst('bmi_', 'category_')) ?? '',
-          'dateTime': prefs.getString(key.replaceFirst('bmi_', 'dateTime_')) ?? '',
-        };
-        bmiHistory.add(bmiData);
-      }
-    }
-
-    // Sort history by date
-    bmiHistory.sort((a, b) => b['dateTime']!.compareTo(a['dateTime']!));
-
-    return bmiHistory;
-  }
 }
+

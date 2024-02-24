@@ -131,7 +131,7 @@ class _BMICalculatorState extends State<BMICalculator> {
                     ElevatedButton(
                       onPressed: () {
                         calculateBMI();
-                        saveBMI(bmiResult, bmiCategory);
+                        saveBMI();
                       },
                       child: const Text('Calculate BMI'),
                     ),
@@ -149,6 +149,15 @@ class _BMICalculatorState extends State<BMICalculator> {
         ),
       ),
     );
+  }
+
+  void saveBMI() async {
+    try {
+      await ApiProvider().saveBMI(bmiResult, bmiCategory);
+      print('BMI data saved successfully');
+    } catch (e) {
+      print('Error in saving BMI data: $e');
+    }
   }
 
   void calculateBMI() {

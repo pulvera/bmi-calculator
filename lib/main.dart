@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'bmi_saved_history.dart';
+import 'bmi_utils.dart';
 
 void main() {
   runApp(const MyApp());
@@ -58,7 +59,8 @@ class _BMICalculatorState extends State<BMICalculator> {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => BMISavedHistoryScreen()),
+                MaterialPageRoute(
+                    builder: (context) => BMISavedHistoryScreen()),
               );
             },
           ),
@@ -129,7 +131,7 @@ class _BMICalculatorState extends State<BMICalculator> {
                     ElevatedButton(
                       onPressed: () {
                         calculateBMI();
-                        saveBMI();
+                        saveBMI(bmiResult, bmiCategory);
                       },
                       child: const Text('Calculate BMI'),
                     ),
@@ -138,7 +140,9 @@ class _BMICalculatorState extends State<BMICalculator> {
                 const SizedBox(height: 16.0),
                 Text('BMI Result: ${bmiResult.toStringAsFixed(2)}'),
                 Text('Category: $bmiCategory'),
-                if (showIdealWeight) Text('Ideal Weight: ${calculateIdealWeight().toStringAsFixed(2)} kg'),
+                if (showIdealWeight) Text(
+                    'Ideal Weight: ${calculateIdealWeight().toStringAsFixed(
+                        2)} kg'),
               ],
             ),
           ),
@@ -167,7 +171,8 @@ class _BMICalculatorState extends State<BMICalculator> {
   double calculateIdealWeight() {
     // Assuming target BMI within the normal range is 22.5
     double targetBMI = 22.5;
-    double idealWeight = targetBMI * (heightController.text.isNotEmpty ? pow((double.parse(heightController.text) / 100), 2) : 0.0);
+    double idealWeight = targetBMI * (heightController.text.isNotEmpty ? pow(
+        (double.parse(heightController.text) / 100), 2) : 0.0);
     return idealWeight;
   }
 
@@ -181,74 +186,5 @@ class _BMICalculatorState extends State<BMICalculator> {
     } else {
       return "Obese";
     }
-  }
-
-  Future<void> saveBMI() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    DateTime now = DateTime.now();
-    String currentDate = "${now.year}-${now.month}-${now.day}";
-    String currentTime = "${now.hour}:${now.minute}:${now.second}";
-    String dateTime = "$currentDate $currentTime";
-
-    prefs.setString('bmi_$dateTime', bmiResult.toString());
-    prefs.setString('category_$dateTime', bmiCategory);
-    prefs.setString('dateTime_$dateTime', dateTime);
-  }
-}
-
-class BMISavedHistoryScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('BMI History'),
-      ),
-      body: FutureBuilder<List<Map<String, String>>>(
-        // Assuming 'bmi', 'category', and 'dateTime' are the keys you used in SharedPreferences
-        future: getSavedBMIHistory(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return CircularProgressIndicator();
-          } else if (snapshot.hasError) {
-            return Text('Error: ${snapshot.error}');
-          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return Center(child: Text('No BMI history available.'));
-          } else {
-            List<Map<String, String>> bmiHistory = snapshot.data!;
-            return ListView.builder(
-              itemCount: bmiHistory.length,
-              itemBuilder: (context, index) {
-                return ListTile(
-                  title: Text('BMI: ${bmiHistory[index]['bmi']}'),
-                  subtitle: Text('Category: ${bmiHistory[index]['category']}'),
-                  trailing: Text('Date: ${bmiHistory[index]['dateTime']}'),
-                );
-              },
-            );
-          }
-        },
-      ),
-    );
-  }
-
-  Future<List<Map<String, String>>> getSavedBMIHistory() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    List<Map<String, String>> bmiHistory = [];
-
-    for (String key in prefs.getKeys()) {
-      if (key.startsWith('bmi_')) {
-        Map<String, String> bmiData = {
-          'bmi': prefs.getString(key) ?? '',
-          'category': prefs.getString(key.replaceFirst('bmi_', 'category_')) ?? '',
-          'dateTime': prefs.getString(key.replaceFirst('bmi_', 'dateTime_')) ?? '',
-        };
-        bmiHistory.add(bmiData);
-      }
-    }
-
-    // Sort the history by date
-    bmiHistory.sort((a, b) => b['dateTime']!.compareTo(a['dateTime']!));
-
-    return bmiHistory;
   }
 }

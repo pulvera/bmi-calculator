@@ -1,1 +1,1 @@
-com.example.untitled2
+com.example.simple_mobile_app

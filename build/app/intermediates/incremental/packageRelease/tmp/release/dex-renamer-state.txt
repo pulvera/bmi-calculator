@@ -1,4 +1,4 @@
-#Tue Feb 20 12:15:02 PST 2024
+#Fri Feb 23 11:17:37 PST 2024
 base.0=/Users/macpro/StudioProjects/untitled2/build/app/intermediates/dex/release/minifyReleaseWithR8/classes.dex
 path.0=classes.dex
 renamed.0=classes.dex

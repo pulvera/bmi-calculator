@@ -2,6 +2,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'bmi_saved_history.dart';
 import 'bmi_utils.dart';
+import 'package:intl/intl.dart';
 
 void main() {
   runApp(const MyApp());
@@ -153,7 +154,11 @@ class _BMICalculatorState extends State<BMICalculator> {
 
   void saveBMI() async {
     try {
-      await ApiProvider().saveBMI(bmiResult, bmiCategory);
+      DateTime now = DateTime.now();
+      String currentDay = DateFormat("MMMM, dd, yyyy").format(DateTime.now());
+      String cTime = DateFormat("hh:mm a").format(DateTime.now());
+      String currentTime = currentDay + "  " + cTime;
+      await ApiProvider().saveBMI(bmiResult, bmiCategory,currentTime);
       print('BMI data saved successfully');
     } catch (e) {
       print('Error in saving BMI data: $e');

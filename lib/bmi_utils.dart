@@ -6,7 +6,7 @@ class ApiProvider {
 
   ApiProvider({this.baseUrl = 'https://bmi-calculator-24576-default-rtdb.firebaseio.com/'});
 
-  Future<void> saveBMI(double bmiResult, String bmiCategory) async {
+  Future<void> saveBMI(double bmiResult, String bmiCategory, String currentTime) async {
     try {
       final response = await http.post(
         Uri.parse('$baseUrl/bmi.json'),
@@ -14,6 +14,7 @@ class ApiProvider {
         body: json.encode({
           'bmi': bmiResult.toString(),
           'category': bmiCategory,
+          'currentTime' : currentTime,
         }),
       );
 
@@ -42,7 +43,7 @@ class ApiProvider {
           historyList.add({
             'bmi': value['bmi'],
             'category': value['category'],
-            'dateTime' : value['dateTime'],
+            'currentTime' : value['currentTime'],
             // Add other fields if needed
           });
         });

@@ -26,7 +26,7 @@ class BMISavedHistoryScreen extends StatelessWidget {
                 return ListTile(
                   title: Text('BMI: ${bmiHistory[index]['bmi']}'),
                   subtitle: Text('Category: ${bmiHistory[index]['category']}'),
-                  trailing: Text('Date: ${bmiHistory[index]['dateTime']}'),
+                  trailing: Text('Date: ${bmiHistory[index]['currentTime']}'),
                 );
               },
             );

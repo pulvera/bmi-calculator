@@ -1,4 +1,4 @@
-# BMI Calculator
+# SkinSerenity
 
 A new Flutter project.
 
